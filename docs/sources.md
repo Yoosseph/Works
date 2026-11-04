@@ -1,17 +1,12 @@
 # Sources
 
-Each model record carries links to the specific NVIDIA page and the specific source used for its parameter metadata. The links below explain the source families used in the initial dataset.
+Every record in `data/models.json` links to its own NVIDIA page (`nvidia_url`), its parameter source (`parameter_source`) and the availability source (`endpoint_source`). These are the source families used, in order of preference:
 
-- [NVIDIA Build model catalog](https://build.nvidia.com/models): model-specific hosted API pages and endpoint status.
-- [DeepSeek-R1 model card](https://huggingface.co/deepseek-ai/DeepSeek-R1): total and active MoE parameters.
-- [Qwen3-Coder-480B-A35B model card](https://huggingface.co/Qwen/Qwen3-Coder-480B-A35B-Instruct): total and active parameters.
-- [Meta Llama 4 announcement](https://ai.meta.com/blog/llama-4-multimodal-intelligence/): Maverick architecture and parameter information.
-- [Meta Llama 3.1 model card](https://huggingface.co/meta-llama/Llama-3.1-405B-Instruct): Llama 3.1 parameter counts.
-- [NVIDIA Nemotron-4 model card](https://huggingface.co/nvidia/Nemotron-4-340B-Instruct): Nemotron parameter count.
-- [Qwen3 model card](https://huggingface.co/Qwen/Qwen3-235B-A22B): Qwen3 total and active parameters.
-- [Mixtral-8x22B model card](https://huggingface.co/mistralai/Mixtral-8x22B-Instruct-v0.1): Mixtral total and active parameters.
-- [Mistral Large announcement](https://mistral.ai/news/mistral-large-2407/): Mistral Large parameter metadata.
-- [Microsoft Phi-3 model card](https://huggingface.co/microsoft/Phi-3-medium-128k-instruct): Phi-3 parameter metadata.
-- [Meta Llama 3.2 model cards](https://huggingface.co/meta-llama/Llama-3.2-11B-Vision-Instruct): Llama 3.2 parameter metadata.
+1. **[NVIDIA API model list](https://integrate.api.nvidia.com/v1/models)**: the authoritative list of model IDs addressable with an NVIDIA API key. No key is needed to read it.
+2. **NVIDIA model pages and cards**: `https://build.nvidia.com/<slug>` and the markdown card at `https://build.nvidia.com/<slug>.md`. These provide deprecation dates, stated total and active parameters, and context length.
+3. **Official Hugging Face model repositories**: exact parameter counts from the safetensors metadata (`https://huggingface.co/api/models/<repo>`) and context length from `config.json`. Only the developer's own organization is used, such as `meta-llama`, `mistralai`, `nvidia` or `google`.
+4. **Developer model cards, technical reports and announcements**, when the above are silent.
 
-A source link establishes provenance; it does not imply that a model is still hosted or free. Endpoint claims are supported separately by each model's NVIDIA link and the `endpoint_source` field.
+Third-party blogs, leaderboards and aggregator sites are not used as sources for any number.
+
+A source link establishes provenance. It does not imply that a model is still hosted or free; the `endpoint_status` field and [the methodology](methodology.md) cover that.

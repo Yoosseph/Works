@@ -2,9 +2,9 @@ name: Validate NVIDIA model catalog
 
 on:
   push:
-    paths: ['data/**', 'scripts/**', 'README.md']
+    paths: ['data/**', 'scripts/**', 'README.md', '.github/workflows/**']
   pull_request:
-    paths: ['data/**', 'scripts/**', 'README.md']
+    paths: ['data/**', 'scripts/**', 'README.md', '.github/workflows/**']
   workflow_dispatch:
 
 permissions:
@@ -18,21 +18,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Validate JSON data
+      - name: Validate data and generated files
         run: python scripts/validate_data.py
-      - name: Regenerate README
-        run: python scripts/generate_readme.py
-      - name: Check generated README
-        run: git diff --exit-code -- README.md
-      - name: Check source links
-        run: |
-          python - <<'PY'
-          import json, urllib.request
-          for m in json.load(open('data/models.json')):
-              for key in ('nvidia_url','parameter_source','endpoint_source'):
-                  request = urllib.request.Request(m[key], method='HEAD', headers={'User-Agent':'Works-catalog-check'})
-                  try:
-                      urllib.request.urlopen(request, timeout=20)
-                  except Exception as e:
-                      print(f'warning: {m["name"]} {key}: {e}')
-          PY
+      - name: Compare with the live NVIDIA API (informational)
+        # Upstream changes should not block unrelated pull requests; read this step's log for drift.
+        continue-on-error: true
+        run: python scripts/update_models.py --check

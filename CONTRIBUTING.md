@@ -1,14 +1,32 @@
-# Contributing
+# Contributing to NVIDIA Model Rankings
 
-Thanks for helping keep the catalog accurate.
+Thanks for helping keep the catalog accurate. Everything runs on the Python standard library (3.10+).
 
-## Adding or updating a model
+## Refreshing the catalog
 
-1. Find a model-specific NVIDIA page on `build.nvidia.com`.
-2. Verify total and active parameters from an official developer source or model card. Never infer counts from a name.
-3. Add one record to `data/models.json` with numeric parameter values, both source URLs, and the current ISO date in `last_verified`.
-4. Set `free_endpoint` to `true` only when the NVIDIA page currently supports the definition in [methodology.md](docs/methodology.md).
-5. Run `python scripts/validate_data.py` and `python scripts/generate_readme.py`.
-6. Include the generated README and explain any source discrepancy in the pull request.
+```bash
+python scripts/update_models.py --check   # what changed upstream?
+python scripts/update_models.py --apply   # write status changes and removals
+python scripts/generate_readme.py         # rebuild README.md and data/models.csv
+python scripts/validate_data.py           # must pass before opening a PR
+```
 
-Do not add API keys, scraped credentials, paid-service dependencies, or claims that cannot be cited. Availability changes quickly, so conservative `Unknown` values are preferable to guesses.
+If you have an NVIDIA API key, `NVIDIA_API_KEY=nvapi-... python scripts/update_models.py --probe` confirms that each listed LLM endpoint actually answers.
+
+## Adding a new model
+
+`update_models.py` lists new model IDs along with the facts stated on their NVIDIA card. For each one:
+
+1. Add a record to `data/models.json` with the exact API `id`. Set `nvidia_url` to the real page, which `--check` prints and whose slug may differ from the ID.
+2. Get `total_parameters` from the official unquantized Hugging Face checkpoint (`parameter_basis: "checkpoint"`). If none exists, use the NVIDIA or developer card (`"stated"`). **Never infer a count from the model name.**
+3. Fill in `active_parameters` for MoE and hybrid MoE models, plus `architecture`, `context_length` and `model_type`.
+4. Set `category`, `endpoint_status`, `free_endpoint` and `last_verified` (today's ISO date) as described in [docs/methodology.md](docs/methodology.md).
+5. Run `generate_readme.py` and `validate_data.py`, and commit the regenerated files.
+
+Explain any disagreement between sources in the PR, and in the record's `notes` if readers need it.
+
+## Rules
+
+- Do not edit README tables or `data/models.csv` by hand. They are generated.
+- Do not add API keys, credentials or claims you cannot cite.
+- A conservative `null` is better than a guess.
