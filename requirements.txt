@@ -1,1 +1,2 @@
-requests>=2.31.0
+# The catalog scripts use only the Python standard library (Python 3.10+).
+# Nothing needs to be installed. This file is kept so tooling that expects it still works.
