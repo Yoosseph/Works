@@ -80,6 +80,10 @@ def page_status(model_id: str, hint: str | None = None) -> dict:
     code, html, location = http_get(f"{BUILD_URL}/{slug or model_id}", follow=False)
     if code in (301, 302, 307, 308):
         target = location if (location or "").startswith("http") else f"{BUILD_URL}{location}"
+        if target.rstrip("/").endswith("/experience-unavailable"):
+            # Region-gated page (e.g. Meta multimodal models outside the US), not a deprecation.
+            # Run this check from an unrestricted region; CI on GitHub-hosted runners is the reference.
+            return {"slug": slug, "error": "page is region-restricted from this network"}
         return {"slug": slug, "redirect": target}
     if code != 200:
         return {"slug": slug, "error": f"HTTP {code}"}
@@ -144,7 +148,7 @@ def main(argv: list[str]) -> int:
             print(f"  ? {mid}: page check failed ({st['error']})")
             continue
         dep, want = st.get("deprecation_date"), classify(st)
-        if want != m["endpoint_status"] or (dep and dep != m.get("deprecation_date")):
+        if want != m["endpoint_status"] or dep != m.get("deprecation_date"):
             changes.append((m, want, dep, st))
         elif dep and dep > TODAY:
             print(f"  ! {mid}: deprecation scheduled for {dep}")
@@ -176,7 +180,7 @@ def main(argv: list[str]) -> int:
 
     if apply:
         for m, want, dep, st in changes:
-            m.update(endpoint_status=want, free_endpoint=want == "Free Endpoint", deprecation_date=dep or m.get("deprecation_date"))
+            m.update(endpoint_status=want, free_endpoint=want == "Free Endpoint", deprecation_date=dep)
             if st.get("slug"):
                 m["nvidia_url"] = f"{BUILD_URL}/{st['slug']}"
             redirect = st.get("redirect")

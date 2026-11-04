@@ -13,7 +13,7 @@ Status is derived from evidence, never from a model's name or popularity:
 | Status | Evidence |
 |---|---|
 | `Free Endpoint` | Listed by `/v1/models`, has a published NVIDIA model card (`https://build.nvidia.com/<slug>.md`), and its model page shows no deprecation date in the past. |
-| `Deprecated` | Listed by `/v1/models`, but the model page shows a deprecation date on or before `last_verified`, or redirects to `experience-unavailable` or a successor model. |
+| `Deprecated` | Listed by `/v1/models`, but the model page shows a deprecation date on or before `last_verified`, or redirects to a successor model. |
 | `Unlisted` | Listed by `/v1/models`, but NVIDIA no longer publishes a model page or card for it. |
 
 `free_endpoint` is `true` only for `Free Endpoint`. Free means a free NVIDIA Developer Program API key can be used for prototyping. Access is a rate-limited trial under the NVIDIA API Trial Terms of Service, not unlimited production access.
@@ -21,6 +21,7 @@ Status is derived from evidence, never from a model's name or popularity:
 Two pitfalls this method avoids:
 
 - `build.nvidia.com/<anything>` returns HTTP 200 with a generic page even for model IDs that do not exist. The markdown model card, not the HTTP status, proves that a page exists.
+- Some pages are region-restricted. Meta's multimodal Llama pages, for example, redirect to `experience-unavailable` in some countries. That is not a deprecation: `update_models.py` reports it as inconclusive. GitHub-hosted CI runners are the reference vantage point.
 - Page slugs often differ from API IDs. For example, `nvidia/llama-3.1-nemotron-70b-instruct` lives at `nvidia/llama-3_1-nemotron-70b-instruct`. `nvidia_url` stores the real page.
 
 Models that drop out of `/v1/models` move to `data/removed.json`, with NVIDIA's deprecation date where one was published.

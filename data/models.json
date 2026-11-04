@@ -374,14 +374,14 @@
       "Multimodal",
       "Vision"
     ],
-    "endpoint_status": "Deprecated",
-    "free_endpoint": false,
+    "endpoint_status": "Free Endpoint",
+    "free_endpoint": true,
     "deprecation_date": null,
     "nvidia_url": "https://build.nvidia.com/meta/llama-3.2-90b-vision-instruct",
     "parameter_source": "https://huggingface.co/meta-llama/Llama-3.2-90B-Vision-Instruct",
     "endpoint_source": "https://integrate.api.nvidia.com/v1/models",
     "last_verified": "2026-11-04",
-    "notes": "Catalog page now redirects to https://build.nvidia.com/experience-unavailable."
+    "notes": "Its build.nvidia.com page is region-restricted and redirects to experience-unavailable in some countries."
   },
   {
     "id": "writer/palmyra-fin-70b-32k",
@@ -899,12 +899,12 @@
     ],
     "endpoint_status": "Deprecated",
     "free_endpoint": false,
-    "deprecation_date": null,
+    "deprecation_date": "2026-11-04",
     "nvidia_url": "https://build.nvidia.com/meta/llama-3.2-11b-vision-instruct",
     "parameter_source": "https://huggingface.co/meta-llama/Llama-3.2-11B-Vision-Instruct",
     "endpoint_source": "https://integrate.api.nvidia.com/v1/models",
     "last_verified": "2026-11-04",
-    "notes": "Catalog page now redirects to https://build.nvidia.com/experience-unavailable."
+    "notes": "Its build.nvidia.com page is region-restricted and redirects to experience-unavailable in some countries."
   },
   {
     "id": "adept/fuyu-8b",
