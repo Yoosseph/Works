@@ -2,9 +2,9 @@ name: Validate NVIDIA model catalog
 
 on:
   push:
-    paths: ['data/**', 'scripts/**', 'README.md', '.github/workflows/**']
+    paths: ['data/**', 'scripts/**', 'site/**', 'tests/**', 'README.md', '.github/workflows/**']
   pull_request:
-    paths: ['data/**', 'scripts/**', 'README.md', '.github/workflows/**']
+    paths: ['data/**', 'scripts/**', 'site/**', 'tests/**', 'README.md', '.github/workflows/**']
   workflow_dispatch:
 
 permissions:
@@ -20,6 +20,10 @@ jobs:
           python-version: '3.12'
       - name: Validate data and generated files
         run: python scripts/validate_data.py
+      - name: Validate search metadata and build static site
+        run: |
+          python -m unittest discover -s tests
+          python scripts/build_site.py
       - name: Compare with the live NVIDIA API (informational)
         # Upstream changes should not block unrelated pull requests; read this step's log for drift.
         continue-on-error: true
